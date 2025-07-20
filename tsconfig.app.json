@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true,
+
+    /* Configuración para módulos ES modernos */
+    "target": "ESNext",
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
+
+    /* BaseUrl y paths para alias @ */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+
+    /* Soporte para decoradores y JSX (opcional) */
+    "jsx": "preserve",
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"]
+}

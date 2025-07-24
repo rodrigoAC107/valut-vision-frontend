@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+import { getLocalStorage } from '@/utils/localStorage.js';
+
 const api = axios.create({
     baseURL: 'http://localhost:3000/api/',
     timeout: 10000,
@@ -9,7 +11,7 @@ const api = axios.create({
 // Interceptor para agregar el token dinámicamente
 api.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem('token');
+        const token = getLocalStorage('token');
         if (token) {
             // Aseguramos que headers exista
             if (!config.headers) {

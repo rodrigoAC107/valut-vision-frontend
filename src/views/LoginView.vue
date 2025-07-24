@@ -17,7 +17,7 @@
                         extraClass="border-gray-400" />
                     <BaseInput v-model="password" type="password" placeholder="Password" label="Password"
                         extraClass="border-gray-400" />
-                    <BaseButton @click="handleClick" variant="primary" label="Login" />
+                    <BaseButton @click="handleLogin" variant="primary" label="Login" />
                 </div>
             </div>
 
@@ -30,16 +30,36 @@
     </div>
 </template>
 <script setup lang="ts">
-import { ref } from 'vue';
 import router from '@/router';
+import { ref } from 'vue';
+
+import { setLocalStorage } from '@/utils/localStorage';
+import { login } from '@/services/auth/login';
+
 import BaseInput from '@/components/ui/Input/BaseInput.vue';
 import BaseButton from '@/components/ui/Button/BaseButton.vue';
+import { showToast } from '@/utils/alerts';
 
-const email = ref('')
-const password = ref('')
+const email = ref('rodrigo@gmail.com')
+const password = ref('rodrigo123$')
 
-const handleClick = () => {
-    router.push({ name: 'Dashboard' })
+const handleLogin = async () => {
+
+    try {
+        const { token, user } = await login(email.value, password.value);
+        // Check if user and token are present
+        if (token && user) {
+            setLocalStorage('user', user);
+            setLocalStorage('token', token);
+            showToast({ message: 'Login successful!', type: 'success' });
+            router.push({ name: 'Dashboard' });
+        } else {
+            showToast({ message: 'Login failed!!', type: 'error' });
+        }
+    } catch (error) {
+        console.error('Error en login:', error);
+        showToast({ message: 'Login failed!!', type: 'error' });
+    }
 }
 
 </script>

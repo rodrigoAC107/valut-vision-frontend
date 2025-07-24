@@ -43,25 +43,30 @@
 </template>
 
 <script setup lang="ts">
-import { showConfirm } from '@/utils/alerts';
+import { showConfirm, showToast } from '@/utils/alerts';
+import { clearLocalStorage } from '@/utils/localStorage';
+import { onMounted } from 'vue';
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
-const handleLogout = async () => {
+onMounted(() => {
+    const user = localStorage.getItem('user');
+    if (!user) {
+        showToast({ message: 'Please log in first', type: 'error' });
+        router.push('/login');
+    }
+});
 
+const handleLogout = async () => {
     const result = await showConfirm({
         title: 'Log out',
         text: 'Are you sure you want to log out?',
         confirmButtonText: 'Logout',
     });
     if (result?.isConfirmed) {
-        // Lógica de logout (limpiar sesión, token, etc.)
-        console.log('Logging out...')
+        clearLocalStorage();
         router.push('/login')
-    } else {
-        console.log('Cancelado')
     }
-
 }
 </script>

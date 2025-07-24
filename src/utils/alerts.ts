@@ -34,3 +34,31 @@ export const showConfirm = ({
         buttonsStyling: false,
     });
 };
+
+interface ToastOptions {
+    message: string;
+    type?: 'success' | 'error';
+    duration?: number; // en milisegundos
+}
+
+export const showToast = ({
+    message,
+    type = 'success',
+    duration = 3000,
+}: ToastOptions) => {
+    return Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: type,
+        title: message,
+        showConfirmButton: false,
+        timer: duration,
+        timerProgressBar: true,
+        background: '#001d3d',
+        color: '#a9cce3',
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer);
+            toast.addEventListener('mouseleave', Swal.resumeTimer);
+        },
+    });
+};

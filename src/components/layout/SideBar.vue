@@ -43,13 +43,25 @@
 </template>
 
 <script setup lang="ts">
+import { showConfirm } from '@/utils/alerts';
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
-function handleLogout() {
-    // Lógica de logout (limpiar sesión, token, etc.)
-    console.log('Logging out...')
-    router.push('/login')
+const handleLogout = async () => {
+
+    const result = await showConfirm({
+        title: 'Log out',
+        text: 'Are you sure you want to log out?',
+        confirmButtonText: 'Logout',
+    });
+    if (result?.isConfirmed) {
+        // Lógica de logout (limpiar sesión, token, etc.)
+        console.log('Logging out...')
+        router.push('/login')
+    } else {
+        console.log('Cancelado')
+    }
+
 }
 </script>

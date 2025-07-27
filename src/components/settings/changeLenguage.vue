@@ -21,12 +21,12 @@ const selectedLenguage = computed({
 
 const lenguageOptions = [
     {
-        value: 'es',
-        label: 'Spanish'
-    },
-    {
         value: 'en',
         label: 'English'
+    },
+    {
+        value: 'es',
+        label: 'Spanish'
     }
 ]
 

@@ -37,7 +37,7 @@ export const showConfirm = ({
 
 interface ToastOptions {
     message: string;
-    type?: 'success' | 'error';
+    type?: 'success' | 'error' | 'warning' | 'info';
     duration?: number; // en milisegundos
 }
 

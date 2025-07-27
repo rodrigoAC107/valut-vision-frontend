@@ -4,13 +4,13 @@
             <div class="flex gap-4">
                 <ChangePassword />
                 <AddTagBox v-model="categoryIncomes" title="Add New Income" placeholder="New Income" label="New Income"
-                    buttonText="Add" />
+                    buttonText="Add" @added="reloadAll" type="income" />
                 <AddTagBox v-model="categoryExpenses" title="Add New Expense" placeholder="New Expense"
-                    label="New Expense" buttonText="Add" />
+                    label="New Expense" buttonText="Add" @added="reloadAll" type="expense" />
             </div>
             <div class="flex gap-4">
                 <AddTagBox v-model="subCategoryExpenses" title="Add New Sub Category" placeholder="New Sub Category"
-                    label="New Sub Category" buttonText="Add" />
+                    label="New Sub Category" buttonText="Add" @added="reloadAll" type="subcategory" />
                 <ChangeTheme />
                 <ChangeLenguage />
             </div>
@@ -18,15 +18,31 @@
     </div>
 </template>
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
+import { getCategories, GetCategoriesResponse, getSubCategory, GetSubCategoryResponse } from '@/services/settings/Categories';
 import ChangePassword from '@/components/settings/changePassword.vue';
 import ChangeTheme from '@/components/settings/changeTheme.vue';
 import ChangeLenguage from '@/components/settings/changeLenguage.vue';
 import AddTagBox from '@/components/settings/addTagBox.vue';
 
-const categoryIncomes = ref<string[]>(['Salary']);
-const categoryExpenses = ref<string[]>(['Food']);
-const subCategoryExpenses = ref<string[]>(['Groceries']);
+const categoryIncomes = ref<string[]>([]);
+const categoryExpenses = ref<string[]>([]);
+const subCategoryExpenses = ref<string[]>([]);
+
+async function reloadAll() {
+    const incomes: GetCategoriesResponse[] = await getCategories('income');
+    categoryIncomes.value = incomes.map(cat => cat.name);
+
+    const expenses: GetCategoriesResponse[] = await getCategories('expense');
+    categoryExpenses.value = expenses.map(cat => cat.name);
+
+    const subcategory: GetSubCategoryResponse[] = await getSubCategory();
+    subCategoryExpenses.value = subcategory.map(cat => cat.name);
+}
+
+onMounted(async () => {
+    await reloadAll();
+});
 
 defineOptions({
     name: 'SettingsView'

@@ -14,7 +14,9 @@ export type GetTransactionsResponse = {
     updatedAt: string;      // ISO date string
 };
 
-export const getTransactions = async (): Promise<GetTransactionsResponse[]> => {
-    const response = await api.get<GetTransactionsResponse[]>('transactions');
+export const getTransactions = async (filters = {}): Promise<GetTransactionsResponse[]> => {
+    const response = await api.get<GetTransactionsResponse[]>('transactions', {
+        params: filters
+    });
     return response.data;
 };

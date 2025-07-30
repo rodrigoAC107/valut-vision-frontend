@@ -43,11 +43,11 @@ import BaseModal from '@/components/ui/Modal/BaseModal.vue'
 import DataTable from '@/components/ui/Table/DataTable.vue'
 
 import { transactionColumns } from '@/data/transaction/column'
-// import { transaction } from '@/data/transaction/data'
 import { getCategories, GetCategoriesResponse } from '@/services/settings/categories'
 import { getTransactions, GetTransactionsResponse } from '@/services/transactions/transactions'
 import { useModalCreateStore } from '@/store/transaction/transactionCreateStore'
 import { useSidebarStore } from '@/store/transaction/transactionEditStore'
+import { normalizeDateRangeForFilter } from '@/utils/formatDate'
 
 import { onMounted, ref, watch } from 'vue'
 
@@ -71,7 +71,15 @@ onMounted(async () => {
 });
 
 const getTransactionsData = async () => {
-    const response = await getTransactions();
+    const filters: { type?: string; categoryId?: string; startDate?: string; endDate?: string } = {};
+
+    if (selectedType.value) filters.type = selectedType.value;
+    if (selectedCategory.value) filters.categoryId = selectedCategory.value;
+    if (selectedDate.value && Array.isArray(selectedDate.value)) {
+        Object.assign(filters, normalizeDateRangeForFilter(selectedDate.value));
+    }
+
+    const response = await getTransactions(filters);
     transaction.value = response
 }
 
@@ -82,6 +90,10 @@ const getCategoriesData = async () => {
         label: cat.name,
     }));
 }
+
+watch([selectedType, selectedCategory, selectedDate], async () => {
+    await getTransactionsData();
+});
 
 watch(selectedType, async (newType) => {
     if (newType) {
@@ -100,6 +112,7 @@ const clearFilters = () => {
     categoryOptions.value = [];
     selectedDate.value = '';
     getCategoriesData();
+    getTransactionsData();
 }
 
 const abrirModal = () => {

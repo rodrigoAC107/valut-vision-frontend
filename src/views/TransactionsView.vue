@@ -43,8 +43,9 @@ import BaseModal from '@/components/ui/Modal/BaseModal.vue'
 import DataTable from '@/components/ui/Table/DataTable.vue'
 
 import { transactionColumns } from '@/data/transaction/column'
-import { transaction } from '@/data/transaction/data'
+// import { transaction } from '@/data/transaction/data'
 import { getCategories, GetCategoriesResponse } from '@/services/settings/categories'
+import { getTransactions, GetTransactionsResponse } from '@/services/transactions/transactions'
 import { useModalCreateStore } from '@/store/transaction/transactionCreateStore'
 import { useSidebarStore } from '@/store/transaction/transactionEditStore'
 
@@ -57,22 +58,24 @@ const selectedType = ref('')
 const selectedCategory = ref('');
 const categoryOptions = ref<{ value: string; label: string }[]>([]);
 
+const transaction = ref<GetTransactionsResponse[]>([]);
+
 const typeOptions = [
     { value: 'expense', label: 'Expense' },
     { value: 'income', label: 'Income' },
 ];
 
 onMounted(async () => {
+    await getTransactionsData();
     await getCategoriesData();
 });
 
-async function getTransactions() {
-    // Implement the logic to fetch transactions based on selected filters
-    // This is a placeholder function, replace with actual API call
-
+const getTransactionsData = async () => {
+    const response = await getTransactions();
+    transaction.value = response
 }
 
-async function getCategoriesData() {
+const getCategoriesData = async () => {
     const categories: GetCategoriesResponse[] = await getCategories(selectedType.value);
     categoryOptions.value = categories.map(cat => ({
         value: cat._id,

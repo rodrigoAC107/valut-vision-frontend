@@ -13,12 +13,18 @@
         </div>
         <hr class="my-4 border border-gray-200" />
         <div class="max-h-40 flex flex-wrap gap-4 overflow-y-auto py-2">
-            <label v-for="(item, index) in modelValue" :key="index" :class="[
-                'inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-white ring-1 ring-inset',
+            <label v-for="(item) in modelValue" :key="item.id" :class="[
+                'inline-flex items-center rounded-md px-2 py-1 text-xs font-medium text-white ring-1 ring-inset select-none hover:cursor-pointer gap-1',
                 getColorByType(type)
-            ]">
-                {{ item }}
+            ]" @click="editItem(item)">
+                {{ item.name }}
+                <span class="ml-1 text-white hover:text-red-400 hover:font-bold select-none"
+                    @click.stop="removeItem(item)">
+                    ×
+                </span>
             </label>
+
+
         </div>
     </Card>
 </template>
@@ -27,17 +33,19 @@
 import { capitalize, ref } from 'vue';
 import Card from '@/components/ui/Card/Card.vue';
 import BaseInput from '@/components/ui/Input/BaseInput.vue';
-import { addCategory, addSubCategory } from '@/services/settings/Categories';
-import { showToast } from '@/utils/alerts';
+import { addCategory, addSubCategory, editCategory, editSubCategory, removeCategory, removeSubCategory } from '@/services/settings/categories';
+import { showConfirm, showEditPrompt, showToast } from '@/utils/alerts';
 
 const props = defineProps<{
     title: string;
     placeholder: string;
     label: string;
     buttonText?: string;
-    modelValue: string[];
+    modelValue: { id: string; name: string }[];
     type: 'income' | 'expense' | 'subcategory';
 }>();
+
+const newItem = ref('');
 
 const emit = defineEmits<{
     (e: 'added'): void;
@@ -56,7 +64,55 @@ function getColorByType(type: string): string {
     }
 }
 
-const newItem = ref('');
+const editItem = async (item: { id: string; name: string }) => {
+
+    const result = await showEditPrompt({
+        title: 'Edit',
+        text: 'Change the item name below:',
+        inputValue: item.name,
+        confirmButtonText: 'Edit',
+    });
+
+    if (result.isConfirmed && result.value.trim()) {
+        const newName = result.value.trim();
+        try {
+            if (props.type === 'subcategory') {
+                await editSubCategory(item.id, newName);
+            } else {
+                await editCategory(item.id, newName);
+            }
+            emit('added');
+            showToast({ message: `"${newName}" edited successfully!`, type: 'success' });
+        } catch (error) {
+            console.error('Error editting item:', error);
+            showToast({ message: `Failed to edit "${newName}".`, type: 'error' });
+        }
+    }
+}
+
+
+const removeItem = async (item: { id: string; name: string }) => {
+    const result = await showConfirm({
+        title: 'Remove',
+        text: `Are you sure you want to remove "${item.name}"?`,
+        confirmButtonText: 'Remove',
+    });
+
+    if (result?.isConfirmed) {
+        try {
+            if (props.type === 'subcategory') {
+                await removeSubCategory(item.id);
+            } else {
+                await removeCategory(item.id);
+            }
+            emit('added');
+            showToast({ message: `"${item.name}" removed successfully!`, type: 'success' });
+        } catch (error) {
+            console.error('Error removing item:', error);
+            showToast({ message: `Failed to remove "${item.name}".`, type: 'error' });
+        }
+    }
+}
 
 const handleAdd = async () => {
     const trimmed = capitalize(newItem.value.trim());
@@ -66,7 +122,7 @@ const handleAdd = async () => {
         return;
     }
 
-    if (props.modelValue.includes(trimmed)) {
+    if (props.modelValue.some(item => item.name.toLowerCase() === trimmed.toLowerCase())) {
         showToast({ message: `"${trimmed}" already exists.`, type: 'warning' });
         return;
     }

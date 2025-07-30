@@ -46,3 +46,27 @@ export const addSubCategory = async (
     const response = await api.post<GetSubCategoryResponse>('subcategory', { name });
     return response.data;
 };
+
+export const editCategory = async (
+    id: string,
+    name: string
+): Promise<GetCategoriesResponse> => {
+    const response = await api.put<GetCategoriesResponse>(`category/${id}`, { name });
+    return response.data;
+};
+
+export const editSubCategory = async (
+    id: string,
+    name: string
+): Promise<GetSubCategoryResponse> => {
+    const response = await api.put<GetSubCategoryResponse>(`subcategory/${id}`, { name });
+    return response.data;
+};
+
+export const removeCategory = async (id: string): Promise<void> => {
+    await api.delete(`category/${id}`);
+};
+
+export const removeSubCategory = async (id: string): Promise<void> => {
+    await api.delete(`subcategory/${id}`);
+};

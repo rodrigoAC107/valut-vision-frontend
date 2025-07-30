@@ -35,6 +35,51 @@ export const showConfirm = ({
     });
 };
 
+export const showEditPrompt = ({
+    title,
+    text,
+    inputValue,
+    confirmButtonText = 'Save',
+    cancelButtonText = 'Cancel',
+}: {
+    title: string;
+    text?: string;
+    inputValue: string;
+    confirmButtonText?: string;
+    cancelButtonText?: string;
+}) => {
+    return Swal.fire({
+        title,
+        text,
+        input: 'text',
+        inputValue,
+        showCancelButton: true,
+        confirmButtonText,
+        cancelButtonText,
+        background: '#001d3d',
+        color: '#a9cce3',
+        customClass: {
+            confirmButton:
+                'py-3 px-6 text-base font-semibold rounded-lg bg-[#1a659e] hover:cursor-pointer hover:bg-[#003566] mx-2',
+            cancelButton:
+                'py-3 px-6 text-base font-semibold rounded-lg border border-[#1a659e] hover:cursor-pointer hover:bg-[#003566] mx-2',
+            input: 'py-2 px-3 rounded-md bg-[#003566] text-white placeholder-gray-400 border border-gray-600',
+        },
+        buttonsStyling: false,
+        inputAttributes: {
+            autocapitalize: 'on',
+            autocomplete: 'off',
+        },
+        inputValidator: (value) => {
+            if (!value.trim()) {
+                return 'Please enter a valid value.';
+            }
+            return null;
+        },
+    });
+};
+
+
 interface ToastOptions {
     message: string;
     type?: 'success' | 'error' | 'warning' | 'info';

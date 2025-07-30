@@ -39,6 +39,7 @@ declare module 'vue' {
     IconIconParkOutlineTransactionOrder: typeof import('~icons/icon-park-outline/transaction-order')['default']
     IconMaterialSymbolsArrowLeftAltRounded: typeof import('~icons/material-symbols/arrow-left-alt-rounded')['default']
     IconMaterialSymbolsBacklightHigh: typeof import('~icons/material-symbols/backlight-high')['default']
+    IconMaterialSymbolsCancelOutline: typeof import('~icons/material-symbols/cancel-outline')['default']
     IconMaterialSymbolsDeleteOutline: typeof import('~icons/material-symbols/delete-outline')['default']
     IconMaterialSymbolsEditOutline: typeof import('~icons/material-symbols/edit-outline')['default']
     IconMaterialSymbolsLogout: typeof import('~icons/material-symbols/logout')['default']

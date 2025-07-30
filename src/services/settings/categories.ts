@@ -20,7 +20,7 @@ export type GetSubCategoryResponse = {
 
 
 export const getCategories = async (
-    type: string
+    type?: string
 ): Promise<GetCategoriesResponse[]> => {
     const response = await api.get<GetCategoriesResponse[]>('category', { params: { type } });
     return response.data;

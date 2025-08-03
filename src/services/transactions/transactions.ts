@@ -24,3 +24,7 @@ export const editTransaction = async (id: string, data: Partial<GetTransactionsR
     const response = await api.put<GetTransactionsResponse>(`transactions/${id}`, data);
     return response.data;
 }
+
+export const deleteTransaction = async (id: string): Promise<void> => {
+    await api.delete<GetTransactionsResponse>(`transactions/${id}`);
+}

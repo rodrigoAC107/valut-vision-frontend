@@ -48,6 +48,7 @@ import { getCategories, GetCategoriesResponse } from '@/services/settings/catego
 import { getTransactions, GetTransactionsResponse } from '@/services/transactions/transactions'
 import { useModalCreateStore } from '@/store/transaction/transactionCreateStore'
 import { useSidebarStore } from '@/store/transaction/transactionEditStore'
+import { useTransactionNotificationStore } from '@/store/transaction/transactionNotificationStore'
 import { normalizeDateRangeForFilter } from '@/utils/formatDate'
 
 import { onMounted, ref, watch } from 'vue'
@@ -59,10 +60,13 @@ const selectedType = ref('')
 const selectedCategory = ref('');
 const categoryOptions = ref<{ value: string; label: string }[]>([]);
 const transaction = ref<GetTransactionsResponse[]>([]);
+
 const typeOptions = [
     { value: 'expense', label: 'Expense' },
     { value: 'income', label: 'Income' },
 ];
+
+const transactionNotificationStore = useTransactionNotificationStore();
 
 onMounted(async () => {
     await getTransactionsData();
@@ -90,9 +94,12 @@ const getCategoriesData = async () => {
     }));
 }
 
-watch([selectedType, selectedCategory, selectedDate], async () => {
-    await getTransactionsData();
-});
+watch(
+    [selectedType, selectedCategory, selectedDate, () => transactionNotificationStore.deleteTrigger],
+    async () => {
+        await getTransactionsData();
+    }
+);
 
 watch(selectedType, async (newType) => {
     if (newType) {

@@ -9,9 +9,12 @@
 </template>
 
 <script setup lang="ts">
+import { deleteTransaction } from '@/services/transactions/transactions';
 import { useSidebarStore } from '@/store/transaction/transactionEditStore';
-import { showConfirm } from '@/utils/alerts';
+import { useTransactionNotificationStore } from '@/store/transaction/transactionNotificationStore';
+import { showConfirm, showToast } from '@/utils/alerts';
 
+const { notifyDeletion } = useTransactionNotificationStore()
 
 const props = defineProps<{
     params: any
@@ -28,9 +31,15 @@ const handleDelete = async () => {
         text: 'Are you sure you want to delete this transaction?',
     });
     if (result?.isConfirmed) {
-        console.log('Confirmado')
-    } else {
-        console.log('Cancelado')
+        try {
+            await deleteTransaction(props.params.data._id);
+            notifyDeletion();
+            showToast({ message: 'Transaction deleted successfully', type: 'success' });
+        } catch (error) {
+            console.error('Error deleting transaction:', error);
+            notifyDeletion();
+            showToast({ message: 'Failed to delete transaction', type: 'error' });
+        }
     }
 }
 </script>

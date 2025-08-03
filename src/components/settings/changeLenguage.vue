@@ -8,9 +8,10 @@
 </template>
 
 <script setup lang="ts">
-import Card from '@/components/ui/Card/Card.vue';
-import { useSettingStore } from '@/store/settings/settingStore';
 import { computed } from 'vue';
+import { useSettingStore } from '@/store/settings/settingStore';
+import Card from '@/components/ui/Card/Card.vue';
+import BaseSelect from '@/components/ui/Input/BaseSelect.vue';
 
 const settingStore = useSettingStore()
 

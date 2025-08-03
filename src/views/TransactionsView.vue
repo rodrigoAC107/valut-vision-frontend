@@ -5,13 +5,13 @@
             <div class="h-1/12 w-full flex">
                 <div class="w-3/6 flex gap-4 items-center">
                     <button
-                        class="h-12 bg-ie-primary-light text-white p-2 rounded-md hover:cursor-pointer hover:bg-ie-primary hover:text-white"
+                        class="h-12 bg-ie-primary-light text-white p-2 rounded-xl hover:cursor-pointer hover:bg-ie-primary hover:text-white"
                         @click="abrirModal">
                         Create
                     </button>
                     <VueDatePicker v-model="selectedDate" format="dd/MM/yyyy" placeholder="Select a date" range :ui="{
                         wrapper: 'rounded-lg',
-                        input: 'h-12 !w-64 !text-sm px-3 rounded-md',
+                        input: 'h-12 !w-64 !text-sm px-3 !rounded-xl',
                     }" />
                     <BaseSelect v-model="selectedType" :options="typeOptions" title="Select type"
                         extraClassInput="h-12" />
@@ -27,7 +27,8 @@
             </div>
         </div>
 
-        <Edit :visible="storeEdit.isOpen" :data="storeEdit.currentItem" @close-sidebar="storeEdit.closeSidebar()" />
+        <Edit :visible="storeEdit.isOpen" :data="storeEdit.currentItem" @close-sidebar="storeEdit.closeSidebar()"
+            @edited="getTransactionsData" />
 
         <BaseModal :isOpen="storeCreate.isOpen" :onClose="() => (storeCreate.closeSidebar())">
             <Create />
@@ -57,9 +58,7 @@ const selectedDate = ref('')
 const selectedType = ref('')
 const selectedCategory = ref('');
 const categoryOptions = ref<{ value: string; label: string }[]>([]);
-
 const transaction = ref<GetTransactionsResponse[]>([]);
-
 const typeOptions = [
     { value: 'expense', label: 'Expense' },
     { value: 'income', label: 'Income' },

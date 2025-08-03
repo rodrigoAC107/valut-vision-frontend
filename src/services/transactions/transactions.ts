@@ -5,7 +5,6 @@ export type GetTransactionsResponse = {
     amount: number;
     date: string;          // ISO date string, ej "2025-07-05T10:00:00.000Z"
     categoryId: string;
-    subcategoryId: string;
     type: 'income' | 'expense';
     description: string;
     expenseType: 'fixed' | 'variable' | string;  // según tus valores posibles
@@ -20,3 +19,8 @@ export const getTransactions = async (filters = {}): Promise<GetTransactionsResp
     });
     return response.data;
 };
+
+export const editTransaction = async (id: string, data: Partial<GetTransactionsResponse>): Promise<GetTransactionsResponse> => {
+    const response = await api.put<GetTransactionsResponse>(`transactions/${id}`, data);
+    return response.data;
+}

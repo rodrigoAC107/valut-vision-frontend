@@ -1,5 +1,5 @@
 export const dateFormatter = (params: any) => {
-    const date = new Date(params.value);
+    const date = params?.value ? new Date(params.value) : new Date(params);
     return new Intl.DateTimeFormat('es-AR', {
         year: 'numeric',
         month: '2-digit',

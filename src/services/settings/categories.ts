@@ -20,7 +20,7 @@ export type GetSubCategoryResponse = {
 
 
 export const getCategories = async (
-    type?: string
+    type?: string | null
 ): Promise<GetCategoriesResponse[]> => {
     const response = await api.get<GetCategoriesResponse[]>('category', { params: { type } });
     return response.data;
@@ -40,6 +40,7 @@ export const addCategory = async (
     return response.data;
 };
 
+// TODO: Remove Subcategory
 export const addSubCategory = async (
     name: string,
 ): Promise<GetSubCategoryResponse> => {
@@ -55,6 +56,7 @@ export const editCategory = async (
     return response.data;
 };
 
+// TODO: Remove Subcategory
 export const editSubCategory = async (
     id: string,
     name: string
@@ -67,6 +69,7 @@ export const removeCategory = async (id: string): Promise<void> => {
     await api.delete(`category/${id}`);
 };
 
+// TODO: Remove Subcategory
 export const removeSubCategory = async (id: string): Promise<void> => {
     await api.delete(`subcategory/${id}`);
 };

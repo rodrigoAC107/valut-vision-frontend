@@ -24,7 +24,7 @@ const handleEdit = () => {
 
 const handleDelete = async () => {
     const result = await showConfirm({
-        title: 'Delete transaction with ID ' + props.params.data.id,
+        title: 'Delete transaction with ID ' + props.params.data._id,
         text: 'Are you sure you want to delete this transaction?',
     });
     if (result?.isConfirmed) {

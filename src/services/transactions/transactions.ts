@@ -7,7 +7,7 @@ export type GetTransactionsResponse = {
     categoryId: string;
     type: 'income' | 'expense';
     description: string;
-    expenseType: 'fixed' | 'variable' | string;  // según tus valores posibles
+    expenseType: 'fixed' | 'variable' | string | undefined;  // según tus valores posibles
     isDeleted: boolean;
     createdAt: string;      // ISO date string
     updatedAt: string;      // ISO date string
@@ -19,6 +19,11 @@ export const getTransactions = async (filters = {}): Promise<GetTransactionsResp
     });
     return response.data;
 };
+
+export const createTransaction = async (data: Omit<GetTransactionsResponse, '_id' | 'createdAt' | 'updatedAt' | 'isDeleted'>): Promise<GetTransactionsResponse> => {
+    const response = await api.post<GetTransactionsResponse>('transactions', data);
+    return response.data;
+}
 
 export const editTransaction = async (id: string, data: Partial<GetTransactionsResponse>): Promise<GetTransactionsResponse> => {
     const response = await api.put<GetTransactionsResponse>(`transactions/${id}`, data);

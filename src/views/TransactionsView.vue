@@ -31,7 +31,7 @@
             @edited="getTransactionsData" />
 
         <BaseModal :isOpen="storeCreate.isOpen" :onClose="() => (storeCreate.closeSidebar())">
-            <Create />
+            <Create @created="getTransactionsData" />
         </BaseModal>
     </div>
 </template>
@@ -50,6 +50,7 @@ import { useModalCreateStore } from '@/store/transaction/transactionCreateStore'
 import { useSidebarStore } from '@/store/transaction/transactionEditStore'
 import { useTransactionNotificationStore } from '@/store/transaction/transactionNotificationStore'
 import { normalizeDateRangeForFilter } from '@/utils/formatDate'
+import { typeOptions } from '@/utils/options'
 
 import { onMounted, ref, watch } from 'vue'
 
@@ -60,11 +61,6 @@ const selectedType = ref('')
 const selectedCategory = ref('');
 const categoryOptions = ref<{ value: string; label: string }[]>([]);
 const transaction = ref<GetTransactionsResponse[]>([]);
-
-const typeOptions = [
-    { value: 'expense', label: 'Expense' },
-    { value: 'income', label: 'Income' },
-];
 
 const transactionNotificationStore = useTransactionNotificationStore();
 

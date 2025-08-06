@@ -50,20 +50,11 @@ import { getCategories, GetCategoriesResponse } from '@/services/settings/catego
 import { dateFormatter } from '@/utils/formatDate'
 import { editTransaction } from '@/services/transactions/transactions'
 import { showToast } from '@/utils/alerts'
+import { typeExpenseOptions, typeOptions } from '@/utils/options'
 
 const store = useSidebarStore()
 const form = ref({ ...store.currentItem })
 const categoryOptions = ref<{ value: string; label: string }[]>([]);
-
-const typeOptions = [
-    { value: 'expense', label: 'Expense' },
-    { value: 'income', label: 'Income' },
-];
-
-const typeExpenseOptions = [
-    { value: 'variable', label: 'Variable' },
-    { value: 'fixed', label: 'Fixed' },
-];
 
 const emit = defineEmits<{
     (e: 'edited'): void;

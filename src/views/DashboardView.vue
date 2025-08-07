@@ -2,9 +2,10 @@
     <div class="h-full w-full p-4">
         <div class="flex flex-col gap-4 h-full">
             <div class="flex gap-2 w-full">
-                <IncomeCard :expense="{ title: 'Total Income', amount: 13500.5 }" class="flex-1" />
-                <ExpenseCard :expense="{ title: 'Total Expense', amount: 13500.5 }" class="flex-1" />
-                <TopExpenseCard :expense="{ category: 'Buy Food Outside', amount: 13500.5, date: '2025-06-01' }"
+                <IncomeCard :expense="{ title: 'Total Income', amount: cardsData.totalIncome }" class="flex-1" />
+                <ExpenseCard :expense="{ title: 'Total Expense', amount: cardsData.totalExpense }" class="flex-1" />
+                <TopExpenseCard
+                    :expense="{ category: cardsData.topExpenseCategory.categoryName, amount: cardsData.topExpenseCategory.total, date: '2025-06-01' }"
                     class="flex-1" />
             </div>
             <div class="flex gap-4 w-full flex-grow h-full">
@@ -17,12 +18,12 @@
                             :options="categoryYearsOptions" title="Select Year" />
                     </Card>
                     <Card class="w-full flex-grow flex items-center justify-center">
-                        <BarChart :chart-data="barChartData" />
+                        <BarChart :chart-data="barChartData.chartData.value" />
                     </Card>
                 </div>
                 <div class="w-1/3 h-full">
                     <Card class="w-full h-full flex items-center justify-center">
-                        <PieChart :chart-data="pieChartData" />
+                        <PieChart v-if="chartData" :chart-data="chartData" />
                     </Card>
                 </div>
             </div>
@@ -32,22 +33,36 @@
 
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import ExpenseCard from '@/components/dashboard/ExpenseCard.vue'
 import IncomeCard from '@/components/dashboard/IncomeCard.vue'
 import TopExpenseCard from '@/components/dashboard/TopExpenseCard.vue'
 import Card from '@/components/ui/Card/Card.vue'
 import BarChart from '@/components/ui/Charts/BarChart.vue'
 import PieChart from '@/components/ui/Charts/PieChart.vue'
-import { pieChartData } from '@/composables/UsePieChartData'
+import { usePieChartData } from '@/composables/UsePieChartData'
 import BaseSelect from '@/components/ui/Input/BaseSelect.vue'
 import { useDashboardFilterStore } from '@/store/dashboard/dashboardYearOrMonthStore'
 import { useBarChartData } from '@/composables/UseBarChartData'
 import { useYearsOptions } from '@/composables/UseYearsOptions'
+import { getDataCards, getTopCategoriesData, ResponseCardData } from '@/services/dashboard/dashhboard'
 
 const barChartData = useBarChartData()
 
 const filterStore = useDashboardFilterStore()
+
+const cardsData = ref<ResponseCardData>({
+    totalIncome: 0,
+    totalExpense: 0,
+    topExpenseCategory: { total: 0, categoryId: '', categoryName: '' },
+});
+
+const chartData = ref();
+
+onMounted(async () => {
+    await getAllCardData();
+    await getPieChartData();
+});
 
 const selectedCategory = computed({
     get: () => filterStore.selectedCategory,
@@ -84,7 +99,33 @@ const categoryMonthOptions = [
     { label: 'October', value: 'october' },
     { label: 'November', value: 'november' },
     { label: 'December', value: 'december' }
-]
+];
+
+const getAllCardData = async () => {
+    const response = await getDataCards();
+    cardsData.value = {
+        totalIncome: response.totalIncome,
+        totalExpense: response.totalExpense,
+        topExpenseCategory: {
+            total: response.topExpenseCategory.total,
+            categoryId: response.topExpenseCategory.categoryId,
+            categoryName: response.topExpenseCategory.categoryName
+        }
+    };
+}
+
+const getPieChartData = async () => {
+    const response = await getTopCategoriesData();
+
+    const dataPieFormat = response.map(item => ({
+        name: item.name,
+        amount: item.amount
+    }));
+
+    const { chartData: pieData } = usePieChartData(dataPieFormat);
+
+    chartData.value = pieData.value;
+}
 
 defineOptions({
     name: 'DashboardView',
